@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-// import { WordGraphMaker } from '../../services/wordGraphMaker';
 
 @Component({
   selector: 'page-contact',
@@ -8,9 +7,5 @@ import { Component } from '@angular/core';
 export class ContactPage {
 
   constructor() { }
-
-  // ionViewWillEnter(): void {
-  //   this.wordGraph.makeDefault('#wordGraph');
-  // }
 
 }

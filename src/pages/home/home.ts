@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { OnInit } from '@angular/core';
-import { InitTouchPunch } from '../../services/touchPunch';
+import { TouchPunchProvider } from '../../providers/touchPunch';
 
 @Component({
   selector: 'page-home',
@@ -8,7 +8,7 @@ import { InitTouchPunch } from '../../services/touchPunch';
 })
 export class HomePage implements OnInit {
 
-  constructor(private touchIt: InitTouchPunch) { }
+  constructor(private touchIt: TouchPunchProvider) { }
 
   ngOnInit(): void {
     this.touchIt.init();

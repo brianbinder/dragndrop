@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { WordGraphMaker } from '../../services/wordGraphMaker';
+import { WordGraphMakerProvider } from '../../providers/wordGraphMaker';
 
 import { AboutPage } from '../about/about';
 import { ContactPage } from '../contact/contact';
@@ -14,7 +14,7 @@ export class TabsPage {
   tab2Root = AboutPage;
   tab3Root = ContactPage;
 
-  constructor(private wordGraph: WordGraphMaker) { }
+  constructor(private wordGraph: WordGraphMakerProvider) { }
 
   createWordGraph() {
     const width = window.innerWidth;

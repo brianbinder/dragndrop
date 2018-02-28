@@ -3,7 +3,7 @@ import * as cloud from 'd3-cloud';
 import { Injectable } from '@angular/core'
 
 @Injectable()
-export class WordGraphMaker {
+export class WordGraphMakerProvider {
   makeDefault(targetSelector: string, width: number, height: number): void {
     d3.select(targetSelector).html('');
     var colors = d3.schemeCategory10;

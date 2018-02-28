@@ -11,7 +11,9 @@ import { TabsPage } from '../pages/tabs/tabs';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 
-import { ServicesModule } from '../services/services.module';
+import { TouchPunchProvider } from '../providers/touchPunch';
+import { WordGraphMakerProvider } from '../providers/wordGraphMaker';
+import { Grid } from '../providers/grid';
 
 @NgModule({
   declarations: [
@@ -24,7 +26,6 @@ import { ServicesModule } from '../services/services.module';
   imports: [
     BrowserModule,
     IonicModule.forRoot(MyApp),
-    ServicesModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -37,7 +38,9 @@ import { ServicesModule } from '../services/services.module';
   providers: [
     StatusBar,
     SplashScreen,
-    ServicesModule,
+    TouchPunchProvider,
+    WordGraphMakerProvider,
+    Grid,
     {provide: ErrorHandler, useClass: IonicErrorHandler}
   ]
 })
