@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController } from 'ionic-angular';
+// import { WordGraphMaker } from '../../services/wordGraphMaker';
 
 @Component({
   selector: 'page-contact',
@@ -7,8 +7,10 @@ import { NavController } from 'ionic-angular';
 })
 export class ContactPage {
 
-  constructor(public navCtrl: NavController) {
+  constructor() { }
 
-  }
+  // ionViewWillEnter(): void {
+  //   this.wordGraph.makeDefault('#wordGraph');
+  // }
 
 }

@@ -1,3 +1,25 @@
 page-home {
+  .dragTest {
+    background-color: #DAE40A;
+    max-width: 8em;
+    text-align: center;
+    padding: 1em;
+    border-radius: 3em;
+  }
 
+  .dropContainer {
+    padding-top: 20%;
+    display: grid;
+    grid-gap: 5em;
+    grid-template-rows: repeat(3, 1fr);
+  }
+  .drop {
+    margin: 0 auto;
+    width: 40%;
+    max-width: 12em;
+    background-color: #D01F1F;
+    border-radius: 1.5em;
+    text-align: center;
+    padding: 2em 0 2em 0;
+  }
 }
