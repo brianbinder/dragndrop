@@ -27,6 +27,24 @@ function genColor(){
   var col = "rgb(" + ret.join(',') + ")";
   return col;
 }
+function setToolTip(mouseX, mouseY, context, count = 0) {
+  const col = context.getImageData(mouseX, mouseY, 1, 1).data;
+  const colKey = `rgb(${col[0]},${col[1]},${col[2]})`;
+  const nodeData = colorToIndexMap[colKey];
+
+  if (nodeData) {
+    d3.select('#tooltip')
+      .style('opacity', 0.8)
+      .style('top', mouseY + 10 + 'px')
+      .style('left', mouseX + 10 + 'px')
+      .html(nodeData.value);
+  } else if (count < 10) {
+    setToolTip(mouseX + 1, mouseY + 1, context, count + 1);
+  } else {
+    //hide the tooltip when no nodeData is found
+    d3.select('#tooltip').style('opacity', 0);
+  }            
+}
 
 @Injectable()
 export class Grid {
@@ -121,7 +139,6 @@ export class Grid {
       .attr('width', this.width)
       .attr('height', this.height);
 
-    //add .hiddenCanvas { display: none: } to SCSS file in order to hide the shadow canvas
     this.hiddenCanvas = d3.select('#canvasContainer')
       .append('canvas')
       .classed('hiddenCanvas', true)
@@ -142,15 +159,12 @@ export class Grid {
       this.draw(this.hiddenCanvas, true); //Draw the hidden canvas
       if (elapsed > 1000) t.stop();
     });
-    const that = this;
-
-    //Our listener
-    //Add touch detection here!!!!!!!
 
     const canv = <HTMLCanvasElement>document.getElementsByClassName('mainCanvas')[0];
+    const context = this.hiddenCanvas.node().getContext('2d');
+    let mouseX;
+    let mouseY;
     if (this.plt.is('ios') || this.plt.is('android')) {
-      let mouseX;
-      let mouseY;
       return Observable.fromEvent<TouchEvent>(canv, 'touchmove')
         .throttleTime(250)
         .subscribe(e => {
@@ -163,48 +177,18 @@ export class Grid {
             mouseY = Math.floor(touch.pageY);
             e.stopPropagation();
           }
-
-          const hiddenCtx = that.hiddenCanvas.node().getContext('2d');
-          const col = hiddenCtx.getImageData(mouseX, mouseY, 1, 1).data;
-          const colKey = `rgb(${col[0]},${col[1]},${col[2]})`;
-          const nodeData = colorToIndexMap[colKey];
-
-          if (nodeData) {
-            d3.select('#tooltip')
-              .style('opacity', 0.8)
-              .style('top', mouseX + 5 + 'px')
-              .style('left', mouseY + 5 + 'px')
-              .html(nodeData.value);
-          } else {
-            //hide the tooltip when no nodeData is found
-            d3.select('#tooltip').style('opacity', 0);
-          }          
+          setToolTip(mouseX, mouseY, context);
         });
     } else {
       return Observable.fromEvent<MouseEvent>(canv, 'mousemove')
+        .throttleTime(250)
         .subscribe(e => {
-        //d3.select('.mainCanvas').on('mousemove', function() {
-          
-          const mouseX = e.layerX || e.offsetX;
-          const mouseY = e.layerY || e.offsetY;
+        //d3.select('.mainCanvas').on('mousemove', function() {          
+          mouseX = e.layerX || e.offsetX;
+          mouseY = e.layerY || e.offsetY;
 
-          const hiddenCtx = that.hiddenCanvas.node().getContext('2d');
-          const col = hiddenCtx.getImageData(mouseX, mouseY, 1, 1).data;
-          const colKey = `rgb(${col[0]},${col[1]},${col[2]})`;
-          const nodeData = colorToIndexMap[colKey];
-
-          if (nodeData) {
-            d3.select('#tooltip')
-              .style('opacity', 0.8)
-              .style('top', e.pageY + 1 + 'px')
-              .style('left', e.pageX + 1 + 'px')
-              .html(nodeData.value);
-          } else {
-            //hide the tooltip when no nodeData is found
-            d3.select('#tooltip').style('opacity', 0);
-          }          
-        });
-        
+          setToolTip(mouseX, mouseY, context);         
+        });        
     }
   }
 }
