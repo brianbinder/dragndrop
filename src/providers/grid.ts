@@ -1,13 +1,14 @@
 import * as d3 from 'd3';
 import * as d3Chromatic from 'd3-scale-chromatic';
-import { Injectable } from '@angular/core'
+import { Injectable } from '@angular/core';
+import { Platform } from 'ionic-angular';
 
 
 //Tutorial found at:
 //https://medium.freecodecamp.org/d3-and-canvas-in-3-steps-8505c8b27444
 
 
-const colorToNode = {};
+const colorToIndexMap = {};
 let nextCol = 1;
 function genColor(){ 
   
@@ -34,6 +35,8 @@ export class Grid {
   private width;
   private height;
 
+  constructor(private plt: Platform) {}
+
   private size(): void {
     this.width = window.innerWidth;
     const toolbarHeight = $('.toolbar').height();
@@ -45,7 +48,7 @@ export class Grid {
     const groupSpacing = 4;
     const cellSpacing = 2;
     const offsetTop = this.height / 5;
-    const cellSize = Math.floor((this.width - 11) / 100) - cellSpacing;
+    const cellSize = Math.floor((this.width - 11) / 100) - cellSpacing + 1;
     const colorScale = d3.scaleSequential(d3Chromatic.interpolateSpectral)
       .domain(d3.extent(data, d => d.value));
 
@@ -76,7 +79,7 @@ export class Grid {
       .attr('fillStyleHidden', function(d) {
         if (!d.hiddenCol) {
           d.hiddenCol = genColor();
-          colorToNode[d.hiddenCol] = d;
+          colorToIndexMap[d.hiddenCol] = d;
         }
         return d.hiddenCol;
       })
@@ -127,7 +130,7 @@ export class Grid {
     
 
     let data = [];
-    d3.range(8000).forEach((value) => {
+    d3.range(4000).forEach((value) => {
       data.push({ value });
     });
 
@@ -135,44 +138,67 @@ export class Grid {
 
     var t = d3.timer(elapsed => {
       this.draw(this.mainCanvas, false);
-      if (elapsed > 300) t.stop();
+      this.draw(this.hiddenCanvas, true); //Draw the hidden canvas
+      if (elapsed > 1000) t.stop();
     });
     const that = this;
 
     //Our listener
     //Add touch detection here!!!!!!!
-    d3.select('.mainCanvas').on('mousemove', function() {
-      that.draw(that.hiddenCanvas, true); //Draw the hidden canvas
-      const mouseX = d3.event.layerX || d3.event.offsetX;
-      const mouseY = d3.event.layerY || d3.event.offsetY;
 
-      const hiddenCtx = that.hiddenCanvas.node().getContext('2d');
-      const col = hiddenCtx.getImageData(mouseX, mouseY, 1, 1).data;
-      const colKey = `rgb(${col[0]},${col[1]},${col[2]})`;
-      const nodeData = colorToNode[colKey];
+    if (this.plt.is('ios') || this.plt.is('android')) {
+      const canv = document.getElementsByClassName('mainCanvas')[0];
+      let mouseX;
+      let mouseY;
+      canv.addEventListener('touchmove', function(e) {
+        e.preventDefault();
+        //Wait until a touch point is inside the touches array then stopPropagation
+        //d3 and $ do not support touch events properly, so using plain DOM manipulation to get event information
+        if (e.touches.length === 1) {
+          const touch = e.touches[0];
+          mouseX = Math.floor(touch.pageX);
+          mouseY = Math.floor(touch.pageY);
+          e.stopPropagation();
+        }
 
-      if (nodeData) {
-        d3.select('#tooltip')
-          .style('opacity', 0.8)
-          .style('top', d3.event.pageY + 5 + 'px')
-          .style('left', d3.event.pageX + 5 + 'px')
-          .html(nodeData.value);
-      } else {
-        //hide the tooltip when no nodeData is found
-        d3.select('#tooltip').style('opacity', 0);
-      }
-    });
+        const hiddenCtx = that.hiddenCanvas.node().getContext('2d');
+        const col = hiddenCtx.getImageData(mouseX, mouseY, 1, 1).data;
+        const colKey = `rgb(${col[0]},${col[1]},${col[2]})`;
+        const nodeData = colorToIndexMap[colKey];
+
+        if (nodeData) {
+          d3.select('#tooltip')
+            .style('opacity', 0.8)
+            .style('top', mouseX + 5 + 'px')
+            .style('left', mouseY + 5 + 'px')
+            .html(nodeData.value);
+        } else {
+          //hide the tooltip when no nodeData is found
+          d3.select('#tooltip').style('opacity', 0);
+        }
+      });
+    } else {
+      d3.select('.mainCanvas').on('mousemove', function() {
+        
+        const mouseX = d3.event.layerX || d3.event.offsetX;
+        const mouseY = d3.event.layerY || d3.event.offsetY;
+
+        const hiddenCtx = that.hiddenCanvas.node().getContext('2d');
+        const col = hiddenCtx.getImageData(mouseX, mouseY, 1, 1).data;
+        const colKey = `rgb(${col[0]},${col[1]},${col[2]})`;
+        const nodeData = colorToIndexMap[colKey];
+
+        if (nodeData) {
+          d3.select('#tooltip')
+            .style('opacity', 0.8)
+            .style('top', d3.event.pageY + 1 + 'px')
+            .style('left', d3.event.pageX + 1 + 'px')
+            .html(nodeData.value);
+        } else {
+          //hide the tooltip when no nodeData is found
+          d3.select('#tooltip').style('opacity', 0);
+        }
+      });      
+    }
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
