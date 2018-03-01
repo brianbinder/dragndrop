@@ -32,7 +32,6 @@ function genColor(){
 export class Grid {
   private mainCanvas;
   private hiddenCanvas;
-  private context;
   private customBase;
   private custom;
   private width;
@@ -50,7 +49,6 @@ export class Grid {
   private dataBind(data: any[]) {
     const groupSpacing = 4;
     const cellSpacing = 2;
-    const offsetTop = this.height / 5;
     const cellSize = Math.floor((this.width - 11) / 100) - cellSpacing + 1;
     const colorScale = d3.scaleSequential(d3Chromatic.interpolateSpectral)
       .domain(d3.extent(data, d => d.value));
@@ -87,7 +85,7 @@ export class Grid {
         return d.hiddenCol;
       })
 
-    const exitSel = join.exit()
+    join.exit()
       .transition()
       .attr('width', 0)
       .attr('height', 0)
@@ -153,7 +151,7 @@ export class Grid {
     if (this.plt.is('ios') || this.plt.is('android')) {
       let mouseX;
       let mouseY;
-      Observable.fromEvent<TouchEvent>(canv, 'touchmove')
+      return Observable.fromEvent<TouchEvent>(canv, 'touchmove')
         .throttleTime(250)
         .subscribe(e => {
           e.preventDefault();
@@ -183,7 +181,7 @@ export class Grid {
           }          
         });
     } else {
-      Observable.fromEvent<MouseEvent>(canv, 'mousemove')
+      return Observable.fromEvent<MouseEvent>(canv, 'mousemove')
         .subscribe(e => {
         //d3.select('.mainCanvas').on('mousemove', function() {
           
