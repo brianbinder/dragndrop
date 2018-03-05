@@ -7,6 +7,7 @@ import { TouchPunchProvider } from '../../providers/touchPunch';
   templateUrl: 'home.html'
 })
 export class HomePage implements OnInit {
+  public url = document.URL;
 
   constructor(private touchIt: TouchPunchProvider) { }
 
