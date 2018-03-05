@@ -1,21 +1,24 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { Geolocation } from '@ionic-native/geolocation';
 
-/**
- * Generated class for the GeoPage page.
- *
- * See https://ionicframework.com/docs/components/#navigation for more info on
- * Ionic pages and navigation.
- */
 
-@IonicPage()
 @Component({
   selector: 'page-geo',
   templateUrl: 'geo.html',
 })
 export class GeoPage {
+  public lat;
+  public long;
+  public acc;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
+  constructor(private geolocation: Geolocation) {
+    geolocation.getCurrentPosition()
+      .then(position => {
+        this.lat = position.coords.latitude;
+        this.long = position.coords.longitude;
+        this.acc = position.coords.accuracy;
+      })
   }
 
   ionViewDidLoad() {
