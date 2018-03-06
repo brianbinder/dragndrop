@@ -35,8 +35,7 @@ export class AppProviders {
         TouchPunchProvider,
         WordGraphMakerProvider,
         Grid,
-        //{provide: Geolocation, useClass: GeoMock },
-        Geolocation,
+        {provide: Geolocation, useClass: GeoMock },
         {provide: ErrorHandler, useClass: IonicErrorHandler}
       ];
     } else {

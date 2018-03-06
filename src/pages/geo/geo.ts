@@ -8,16 +8,16 @@ import { Geolocation } from '@ionic-native/geolocation';
   templateUrl: 'geo.html',
 })
 export class GeoPage {
-  public lat;
-  public long;
-  public acc;
+  public lat = 'loading';
+  public long = 'loading';
+  public acc = 'loading';
 
   constructor(private geolocation: Geolocation) {
     geolocation.getCurrentPosition()
       .then(position => {
-        this.lat = position.coords.latitude;
-        this.long = position.coords.longitude;
-        this.acc = position.coords.accuracy;
+        this.lat = position.coords.latitude.toString();
+        this.long = position.coords.longitude.toString();
+        this.acc = position.coords.accuracy.toString();
       })
   }
 
